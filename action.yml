@@ -1,0 +1,29 @@
+name: commit message check
+description: check if commit messages follow the conventions
+branding:
+  icon: check-circle
+  color: purple
+inputs:
+  scopes:
+    description: comma separated list of allowed scopes
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 1
+    - name: download check-commit-message
+      shell: bash
+      run: |
+        curl -L -o check-commit-message.sh https://commits.adamperkowski.dev
+        chmod +x check-commit-message.sh
+    - name: set scopes
+      shell: bash
+      run: |
+        IFS=',' read -r -a SCOPES <<< "${{ inputs.scopes }}"
+        echo "SCOPES=${SCOPES[*]}" >> $GITHUB_ENV
+    - name: check
+      shell: bash
+      run: |
+        ./check-commit-message.sh "$(git log -1 --pretty=%B)"

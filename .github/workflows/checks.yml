@@ -1,0 +1,19 @@
+name: checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  misc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: commit message
+        uses: adamperkowski/commits@main
+        with:
+          scopes: action,script,docs,ci,chore
