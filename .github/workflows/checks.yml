@@ -27,4 +27,4 @@ jobs:
       - name: commit message
         uses: adamperkowski/commits@main
         with:
-          scopes: action,script,docs,ci,chore
+          scopes: action,script,docker,docs,ci,chore

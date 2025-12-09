@@ -16,7 +16,7 @@ you can run the latest version directly with
 curl -sSL https://commits.adamperkowski.dev |
   SCOPES=('scope1' 'scope2') \
   bash -s -- \
-  <message>
+  "<message>"
 ```
 
 ### usage
@@ -44,4 +44,28 @@ you can use [check-commit-message] in your github actions workflows
   uses: adamperkowski/commits@main
   with:
     scopes: 'scope1,scope2'
+```
+
+## woodpecker
+[woodpecker]: #woodpecker
+
+you can use the [docker image][docker] in your woodpecker ci pipelines
+
+```yml
+- name: check commit message
+  image: ghcr.io/adamperkowski/commits:latest
+  commands:
+    - export SCOPES=('scope1' 'scope2')
+    - check-commit-message "$(git log -1 --pretty=%B)"
+```
+
+## docker
+[docker]: #docker
+
+you can run the docker image directly
+
+```bash
+docker run --rm -e "SCOPES=('scope1' 'scope2')" \
+  ghcr.io/adamperkowski/commits:latest \
+  check-commit-message "<message>"
 ```
