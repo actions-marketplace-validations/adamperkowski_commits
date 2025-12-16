@@ -26,23 +26,38 @@ check_message() {
   readarray -t full_lines <<<"$message"
   readarray -t body_lines <<<"$subject_body"
 
-  if ((${#full_lines[0]} > 50)); then
+  if [[ "$message" =~ ';' ]]; then
+    echo "message cannot contain semicolons"
+    return 1
+  fi
+
+  check_header "${full_lines[0]}" || return 1
+  check_scope "$scope" || return 1
+  check_subject "${body_lines[0]}" || return 1
+  check_body "${body_lines[@]}" || return 1
+
+  return 0
+}
+
+check_header() {
+  local header="$1"
+
+  if ((${#header} > 50)); then
     echo "header cannot exceed 50 characters"
     return 1
   fi
+}
+
+check_scope() {
+  local scope="$1"
 
   if [[ -z "$scope" ]]; then
     echo "scope cannot be empty"
     return 1
   fi
 
-  if [[ -z "$subject_body" ]] || [[ "$subject_body" == "$message" ]]; then
-    echo "subject cannot be empty"
-    return 1
-  fi
-
-  if [[ "$message" =~ ';' ]]; then
-    echo "message cannot contain semicolons"
+  if [[ "$scope" =~ ' ' ]]; then
+    echo "scope cannot contain spaces"
     return 1
   fi
 
@@ -51,29 +66,34 @@ check_message() {
     echo "allowed scopes: ${allowed_scopes[*]}"
     return 1
   fi
+}
 
-  if [[ ! "${body_lines[0]}" =~ ^[a-z0-9] ]] || ! [[ "${subject_body: -1}" =~ [a-z0-9]$ ]]; then
-    echo "message must start with a lowercase letter and end with a lowercase letter or number"
+check_subject() {
+  local subject="$1"
+
+  if [[ ! "${subject}" =~ ^[a-z0-9] ]] || ! [[ "${subject: -1}" =~ [a-z0-9]$ ]]; then
+    echo "subject must start with a lowercase letter and end with a lowercase letter or number"
     return 1
   fi
+}
 
-  if [[ "${body_lines[1]}" != "" ]]; then
+check_body() {
+  body=("$@")
+  if [[ "${body[1]}" != "" ]]; then
     echo "second line must be empty"
     return 1
   fi
 
-  if [[ -z "${body_lines[2]}" ]]; then
+  if [[ -z "${body[2]}" ]]; then
     return 0
   fi
 
-  for line in "${body_lines[@]:2}"; do
+  for line in "${body[@]:2}"; do
     if ((${#line} > 72)); then
       echo "body lines cannot exceed 72 characters"
       return 1
     fi
   done
-
-  return 0
 }
 
 messages=()
