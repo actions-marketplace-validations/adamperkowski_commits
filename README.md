@@ -53,7 +53,7 @@ you can use the [docker image][docker] in your woodpecker ci pipelines
 
 ```yml
 - name: check commit message
-  image: ghcr.io/adamperkowski/commits:latest
+  image: codeberg.org/adamperkowski/commits:latest
   environment:
     SCOPES: "scope1 scope2"
   commands:
@@ -67,6 +67,6 @@ you can run the docker image directly
 
 ```bash
 docker run --rm -e 'SCOPES="scope1 scope2"' \
-  ghcr.io/adamperkowski/commits:latest \
+  codeberg.org/adamperkowski/commits:latest \
   check-commit-message "<message>"
 ```

@@ -3,7 +3,7 @@
 }:
 
 let
-  pkgInputs = with pkgs; [ shfmt shellcheck ];
+  pkgInputs = with pkgs; [ shfmt shellcheck docker ];
 in
 pkgs.mkShell {
   packages = pkgInputs;
